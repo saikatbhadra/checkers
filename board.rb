@@ -1,6 +1,7 @@
 require_relative 'tile'
 require_relative 'piece'
 
+# Class that contains physical items of chess (board & tiles)
 class Board
   attr_accessor :grid, :tiles
   attr_reader :size
@@ -27,6 +28,7 @@ class Board
       end
       print "\n\n"
     end
+    puts
   end
 
   def inspect
@@ -34,8 +36,12 @@ class Board
     info + "Pieces:\n" + grid.inspect + "\n" #+ "Tiles:\n"  + tiles.inspect
   end
 
-  def [](row,col)
+  def [](row, col)
     grid[row][col]
+  end
+
+  def []=(row, col, assign_val)
+    grid[row][col] = assign_val
   end
 
   def on_board?(coord)
@@ -67,8 +73,25 @@ class Board
     end
 end
 
+
 board = Board.new
 board.display_board
 
-# board[2,1].perform_slide([3,2])
+puts "Moving piece"
+board[2, 1].perform_slide([3, 0])
+board.display_board
+
+puts "Moving piece"
+board[3, 0].perform_slide([4, 1])
+board.display_board
+
+puts "Moving piece"
+board[5, 0].perform_jump([3, 2])
+board.display_board
+
+puts "Moving piece"
+board[2, 3].perform_jump([4, 1])
+board.display_board
+
+# board[3, 0].perform_slide([4, 1])
 # board.display_board
