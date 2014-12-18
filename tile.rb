@@ -1,6 +1,6 @@
 class Tile
   attr_reader :color
-  attr_accessor :piece, :position
+  attr_accessor :position
 
   def initialize(color, position)
     @color = color

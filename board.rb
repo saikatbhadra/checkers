@@ -2,49 +2,39 @@ require_relative 'tile'
 require_relative 'piece'
 
 class Board
-  attr_accessor :grid
+  attr_accessor :grid, :tiles
   attr_reader :size
 
   def initialize(size = 8)
     raise "Can't have odd number of rows" unless size.even?
     @size = size
-    @grid = Array.new(@size) { Array.new(@size) { [] } }
+
+    @tiles = Array.new(@size) { Array.new(@size) { [] } }
     make_tiles
-    add_pieces_to_tiles
-  end
 
-  def inspect
-    # board_array = Array.new(size) { Array.new(size) { [] } }
-    #
-    # board_array.each_index do |i|
-    #   board_array.each_index do |j|
-    #     board_array[i][j] = board_#"Tile color:#{grid[i][j].color}"
-    #   end
-    # end
-
-    "Board: #{object_id} \n" + grid.inspect
+    @grid = Array.new(@size) { Array.new(@size) { [] } }
+    add_pieces
   end
 
   private
     def make_tiles
-      grid.count.times do |i|
-        grid.count.times do |j|
+      size.times do |i|
+        size.times do |j|
           tile_color = (i + j).even? ? :white : :black
-          @grid[i][j] = Tile.new(tile_color,[i,j])
+          @tiles[i][j] = Tile.new(tile_color,[i,j])
         end
       end
     end
 
-    def add_pieces_to_tiles
-      # set a piece on each part of the board
+    def add_pieces
       no_man_rows = [size / 2 - 1, size / 2]
 
-      size.times do |i|
-        next if no_man_rows.include?(i)
-        size.times do |j|
-          piece_color = (i < no_man_rows[0]) ? :white : :red
-          if grid[i][j].color == :black
-            grid[i][j].piece = Piece.new(piece_color, [i,j])
+      size.times do |row|
+        next if no_man_rows.include?(row)
+        size.times do |col|
+          piece_color = (row < no_man_rows[0]) ? :white : :red
+          if tiles[row][col].color == :black
+            grid[row][col] = Piece.new(piece_color, [row,col], self)
           end
         end
       end
