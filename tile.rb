@@ -1,11 +1,10 @@
 class Tile
   attr_reader :color
+  attr_accessor :piece, :position
 
-  def initialize(color)
+  def initialize(color, position)
     @color = color
+    @position = position
   end
 
-  def inspect
-    "Tile: #{self.object_id}, color:#{color}"
-  end
 end

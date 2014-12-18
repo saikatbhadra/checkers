@@ -1,15 +1,24 @@
 class Piece
+  attr_reader :color
+  attr_accessor :position
 
   TOP_MOVE_DIR = [[1,1],[1,-1]]
   BOTTOM_MOVE_DIR = [[-1,1],[-1,-1]]
 
-  def initialize(direction, color)
-    @tile = nil
+  def initialize(color, position)
     @king = false
-    @direction = direction
     @color = color
+    @position = position
   end
 
-  def
+  def valid_moves
+
+  end
+
+  def perform_slide
+  end
+
+  def perform_jump
+  end
 
 end
