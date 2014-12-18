@@ -12,13 +12,34 @@ class Board
     @tiles = Array.new(@size) { Array.new(@size) { [] } }
     make_tiles
 
-    @grid = Array.new(@size) { Array.new(@size) { [] } }
+    @grid = Array.new(@size) { Array.new(@size) { nil } }
     add_pieces
+  end
+
+  def display_board
+    grid.each_index do |i|
+      grid.each_index do |j|
+        if grid[i][j].nil?
+          print "_\t"
+        else
+          (grid[i][j].color == :red) ? print("R\t") : print("W\t")
+        end
+      end
+      print "\n\n"
+    end
   end
 
   def inspect
     info = "Board: #{object_id}, size: #{size}\n"
     info + "Pieces:\n" + grid.inspect + "\n" #+ "Tiles:\n"  + tiles.inspect
+  end
+
+  def [](row,col)
+    grid[row][col]
+  end
+
+  def on_board?(coord)
+    (coord.all? { |el| (0...size) === el }) ? true : false
   end
 
   private
@@ -46,5 +67,8 @@ class Board
     end
 end
 
-x = Board.new
-p x
+board = Board.new
+board.display_board
+
+# board[2,1].perform_slide([3,2])
+# board.display_board
