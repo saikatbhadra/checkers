@@ -16,6 +16,11 @@ class Board
     add_pieces
   end
 
+  def inspect
+    info = "Board: #{object_id}, size: #{size}\n"
+    info + "Pieces:\n" + grid.inspect + "\n" #+ "Tiles:\n"  + tiles.inspect
+  end
+
   private
     def make_tiles
       size.times do |i|
