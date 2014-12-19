@@ -18,12 +18,17 @@ class Game
   end
 
   def play
-    while true
-      #  board.over?
+    until board.over?
       switch_players
-      show_player_info
-      path = current_player.get_moves
-      execute_moves(path)
+      begin
+        show_player_info
+        path = current_player.get_moves
+        execute_moves(path)
+      rescue InvalidMoveError => e
+        puts e.message
+        puts "Invalid move. Please try again."
+        retry
+      end
       board.display_board
     end
   end
