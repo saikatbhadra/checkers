@@ -46,7 +46,6 @@ class Piece
   end
 
   def perform_moves(move_sequence)
-    p move_sequence
     if valid_move_seq?(move_sequence)
       perform_moves_without_check(move_sequence)
     else
