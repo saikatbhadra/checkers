@@ -1,5 +1,6 @@
 require_relative 'tile'
 require_relative 'piece'
+require 'colorize'
 
 class BoardMove <  StandardError
 
@@ -89,15 +90,18 @@ class Board
   def display_board
     grid.each_index do |i|
       grid.each_index do |j|
+        background_color = (tiles[i][j].color == :black) ? :black : :light_white
         if grid[i][j].nil?
-          print "_\t"
+          print "   ".colorize(:background => background_color)
         else
-          (grid[i][j].color == :red) ? print("R\t") : print("W\t")
+          # print "   ".colorize(:background => background_color)
+          color = (grid[i][j].color == :red) ? :red : :light_white
+          print " O ".colorize(:color => color).colorize(:background => background_color)
         end
       end
-      print "\n\n"
+      print "\n"
     end
-    puts
+    print "\n"
   end
 
   def inspect
