@@ -2,48 +2,48 @@ require_relative 'board'
 require_relative 'human_player'
 
 class Game
-  attr_accessor :cur_player, :players
+  attr_accessor :cur_player, :players, :cursor
   attr_reader :board
 
   def initialize(player1, player2)
+    # create the board
     @board = Board.default_board
+
+    # create an array of players, set their colors & show them the board
     @players = [player1, player2]
     @players[0].color = :red
     @players[1].color = :white
+    player1.board = board
+    player2.board = board
   end
 
   def play
-    until board.over?
+    while true
+      #  board.over?
       switch_players
-      display_info
-
-      position, moves = current_player.get_moves
-      p moves
-      p position
-      execute_moves(moves, position)
+      show_player_info
+      path = current_player.get_moves
+      execute_moves(path)
+      board.display_board
     end
   end
 
-  def display_info
+  def show_player_info
     puts "Player Turn: #{current_player.name}"
-    puts "Color: #{current_player.color}"
-    board.display_board
+    puts "Your color is: #{current_player.color}"
   end
 
   def switch_players
     players.reverse!
   end
 
-  def execute_moves(moves, position)
-    # raise "Wrong piece" if board[*position].color != cur_player.color
-    # nEED TO WRITE ALL THE LOGIC AGAIN???
-    board[*position].perform_moves(moves)
+  def execute_moves(moves)
+    board[*moves[0]].perform_moves(moves[1..-1])
   end
 
   def current_player
     players.first
   end
-
 end
 
 if __FILE__ == $PROGRAM_NAME
