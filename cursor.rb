@@ -1,48 +1,27 @@
-require 'io/console'
 require_relative 'coord'
-require_relative 'board'
+require_relative 'console'
 
+# cursor object which stays in bounding square box  [(0...size), (0...size)]
+# todo rename this class
 class Cursor
   attr_accessor :position, :board, :size
 
   def initialize(size)
-    @position = [0,0]
+    @position = [0, 0]
     @size = size
   end
 
-  def get
-    while true
-      chr = read_char
-      offset = arrow_val(chr)
-      offset
-      if offset
-        new_position = Coord.sum(position, offset)
-        if in_range?(new_position)
-          self.position = new_position
-          p position
-        end
-      end
-      break if done?(chr)
+  # update cursor position based on arrow keys from user
+  def update_position
+    chr = Console.read_char
+
+    offset = arrow_val(chr)
+    if offset
+      new_position = Coord.sum(position, offset)
+      self.position = new_position if in_range?(new_position)
     end
 
-    position
-  end
-
-  # Reads keypresses from the user including 2 and 3 escape character sequences.
-  def read_char
-    STDIN.echo = false
-    STDIN.raw!
-
-    input = STDIN.getc.chr
-    if input == "\e" then
-      input << STDIN.read_nonblock(3) rescue nil
-      input << STDIN.read_nonblock(2) rescue nil
-    end
-  ensure
-    STDIN.echo = true
-    STDIN.cooked!
-
-    return input
+    chr
   end
 
   private
@@ -64,13 +43,4 @@ class Cursor
         nil
       end
     end
-
-    def done?(chr)
-      if (chr == "\e") || (chr == "\r")
-        true
-      else
-        false
-      end
-    end
-
 end
