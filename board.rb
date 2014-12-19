@@ -87,21 +87,30 @@ class Board
     duped_board
   end
 
-  def display_board
+  def display_board(cursor_position = nil)
     grid.each_index do |i|
       grid.each_index do |j|
         background_color = (tiles[i][j].color == :black) ? :black : :light_white
         if grid[i][j].nil?
-          print "   ".colorize(:background => background_color)
+          if [i,j] == cursor_position
+            print "$ $".colorize(:background => background_color).colorize(:color => :light_magenta).blink
+          else
+            print "   ".colorize(:background => background_color)
+          end
         else
           # print "   ".colorize(:background => background_color)
           color = (grid[i][j].color == :red) ? :red : :light_white
-          print " O ".colorize(:color => color).colorize(:background => background_color)
+          if [i,j] == cursor_position
+            print "$".colorize(:color => :light_magenta).colorize(:background => background_color).blink
+            print "O".colorize(:color => color).colorize(:background => background_color)
+            print "$".colorize(:color => :light_magenta).colorize(:background => background_color).blink
+          else
+            print " O ".colorize(:color => color).colorize(:background => background_color)
+          end
         end
       end
       print "\n"
     end
-    print "\n"
   end
 
   def inspect
