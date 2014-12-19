@@ -31,6 +31,15 @@ class Game
       end
       board.display_board
     end
+    winning_color = board.winner
+    if players[0].color == winning_color
+      player_won = players[0]
+    else
+      player_won = players[1]
+    end
+
+    puts "Game over."
+    puts "#{player_won.name} won!"
   end
 
   def show_player_info
