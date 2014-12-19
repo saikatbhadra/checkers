@@ -1,8 +1,12 @@
 require_relative 'coord'
 
+class InvalidMoveError <  StandardError
+
+end
+
 class Piece
-  attr_reader :color
-  attr_accessor :position, :board, :king, :move_dir
+  attr_accessor :color
+  attr_accessor :position, :board, :king, :move_dir # make method
 
   TOP_MOVE_DIR = [[1, 1], [1, -1]]
   BOTTOM_MOVE_DIR = [[-1, 1], [-1, -1]]
@@ -15,6 +19,13 @@ class Piece
     @board = board
   end
 
+  def dup(board)
+    duped_piece = Piece.new(color, position, board)
+    duped_piece.move_dir = move_dir
+    duped_piece.king = king
+    duped_piece
+  end
+
   def inspect
     {
       :king => @king,
@@ -25,14 +36,49 @@ class Piece
     }.inspect
   end
 
+  def perform_moves(move_sequence)
+    if valid_move_seq?(move_sequence)
+      perform_moves_without_check(move_sequence)
+    else
+      raise InvalidMoveError.new("Invalid move sequence")
+    end
+  end
+
+  def valid_move_seq?(move_sequence)
+    begin
+      new_board = board.dup
+      new_board[*position].perform_moves_without_check(move_sequence)
+    rescue InvalidMoveError
+      return false
+    end
+
+    true
+  end
+
+  def perform_moves_without_check(move_sequence)
+    if move_sequence.length == 1
+      move_happened = perform_slide(move_sequence.first)
+      move_happened = perform_jump(move_sequence.first) unless move_happened
+      unless move_happened
+        raise InvalidMoveError.new("Move from #{position} to #{move_sequence.first} not valid!")
+      end
+    else
+      move_sequence.each do |move|
+        move_happened = perform_jump(move)
+        unless move_happened
+          raise InvalidMoveError.new("Move from #{position} to #{move} not valid!")
+        end
+      end
+    end
+  end
+
   def perform_slide(new_position)
     return false unless valid_slides.include?(new_position)
 
-    # update position
-    board[*position] = nil
-    board[*new_position] = self
-    self.position = new_position
+    board.remove_piece(position) # remove off board
+    board.add_piece(self, new_position) #add back to board
     maybe_promote
+    true
   end
 
   def opponent?(opp_piece)
@@ -49,15 +95,14 @@ class Piece
     return false unless possible_jumps.include?(new_position)
 
     # update position
-    board[*position] = nil
-    board[*new_position] = self
-    self.position = new_position
+    board.remove_piece(position) # remove off board
+    board.add_piece(self, new_position) # add back to board
 
     # remove the piece that has been eaten
     eat_position = possible_eats[possible_jumps.index(new_position)]
-    board[*eat_position].position = nil
-    board[*eat_position] = nil
+    board.remove_piece(eat_position)
     maybe_promote
+    true
   end
 
   private
@@ -76,7 +121,7 @@ class Piece
     def maybe_promote
       return if king
       if king_row?
-        king = true
+        self.king = true
         new_move_dir = move_dir.map { |coord| [-1 * coord[0], coord[1]] }
         move_dir += new_move_dir
       end
@@ -101,4 +146,7 @@ class Piece
 
       return jumps, eats
     end
+
+  protected
+    attr_accessor :move_dir
 end
