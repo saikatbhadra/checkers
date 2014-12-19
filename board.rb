@@ -27,19 +27,27 @@ class Board
   end
 
   def over?
-    grid.flatten.all? { |el| el == nil }
+    # check if there are pieces from both color
+    red_found = false
+    white_found = false
+
+    grid.flatten.each do |piece|
+      unless piece.nil?
+        red_found = true if piece.color == :red
+        white_found = true if piece.color == :white
+      end
+      return false if red_found && white_found
+    end
+
+    true
   end
 
-  def winner?(color)
-    return false unless over?
-    return true if grid.flatten.any? do |el|
-      if el.nil?
-        false
-      elsif el.color == color
-        true
-      end
+  def winner
+    grid.flatten.each do |tile|
+      return tile.color unless tile.nil?
     end
-    false
+
+    return nil
   end
 
   def set_default_pieces
