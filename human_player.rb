@@ -17,7 +17,7 @@ class HumanPlayer
 
   def get_moves
     puts "Select a position with <ENTER>."
-    puts "Submit all your moves with another <ENTER>"
+    puts "Submit all your moves with another d"
 
     moves = []
     chr = nil
