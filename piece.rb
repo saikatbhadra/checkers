@@ -1,5 +1,5 @@
 require_relative 'coord'
-
+require 'byebug'
 class InvalidMoveError <  StandardError
 
 end
@@ -15,8 +15,17 @@ class Piece
     @king = false
     @color = color
     @position = position
-    @move_dir = (color == :white) ? TOP_MOVE_DIR : BOTTOM_MOVE_DIR
     @board = board
+  end
+
+  def move_dir
+    move_dir = (color == :white) ? TOP_MOVE_DIR : BOTTOM_MOVE_DIR
+    if king
+      new_move_dir = move_dir.map { |coord| [-1 * coord[0], coord[1]] }
+      move_dir += new_move_dir
+    end
+
+    move_dir
   end
 
   def dup(board)
@@ -31,12 +40,13 @@ class Piece
       :king => @king,
       :color => @color,
       :position => @position,
-      :move_dir => @move_dir,
+      :move_dir => move_dir,
       :board => @board.object_id
     }.inspect
   end
 
   def perform_moves(move_sequence)
+    p move_sequence
     if valid_move_seq?(move_sequence)
       perform_moves_without_check(move_sequence)
     else
@@ -86,7 +96,7 @@ class Piece
   end
 
   def king_row?
-    king_row = (move_dir.first.first == 1) ? board.size - 1 : 0
+    king_row = (color == :white) ? board.size - 1 : 0
     position[0] == king_row
   end
 
@@ -122,8 +132,6 @@ class Piece
       return if king
       if king_row?
         self.king = true
-        new_move_dir = move_dir.map { |coord| [-1 * coord[0], coord[1]] }
-        move_dir += new_move_dir
       end
     end
 
@@ -146,7 +154,4 @@ class Piece
 
       return jumps, eats
     end
-
-  protected
-    attr_accessor :move_dir
 end
